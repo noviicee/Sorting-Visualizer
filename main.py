@@ -5,6 +5,9 @@ set up a basic interface."""
 
 #To import the algorithms we have to put the following two lines on top of main.py.
 from algorithms.bubbleSort import bubble_sort
+from algorithms.selectionSort import selection_sort
+from algorithms.insertionSort import insertion_sort
+from algorithms.quickSort import quick_sort
 from algorithms.mergeSort import merge_sort
 
 from tkinter import *
@@ -31,7 +34,7 @@ For now, we will just pass."""
 
 algorithm_name = StringVar()
 # algo_list is to select which alforithm we want to use to sort
-algo_list = ['Bubble Sort', 'Merge Sort']
+algo_list = ['Bubble Sort', 'Selection Sort', 'Insertion Sort', 'Quick Sort', 'Merge Sort']
 
 
 speed_name = StringVar()
@@ -43,23 +46,60 @@ data = []
 
 # This function will draw randomly generated list data[] on the canvas as vertical bars
 def drawData(data, colorArray):
-    pass
+    canvas.delete("all")
+    canvas_width = 800
+    canvas_height = 400
+    x_width = canvas_width / (len(data) + 1)
+    offset = 4
+    spacing = 2
+    normalizedData = [i / max(data) for i in data]
+
+    for i, height in enumerate(normalizedData):
+        x0 = i * x_width + offset + spacing
+        y0 = canvas_height - height * 390
+        x1 = (i + 1) * x_width + offset
+        y1 = canvas_height
+        canvas.create_rectangle(x0, y0, x1, y1, fill=colorArray[i])
+
+    window.update_idletasks()
 
 # This function will generate array with random values every time we hit the generate button
 def generate():
-    pass
+    global data
+
+    data = []
+    for i in range(0, 100):
+        random_value = random.randint(1, 150)
+        data.append(random_value)
+
+    drawData(data, [BLUE for x in range(len(data))])
 
 # This function will set sorting speed
 def set_speed():
-    pass
+    if speed_menu.get() == 'Slow':
+        return 0.3
+    elif speed_menu.get() == 'Medium':
+        return 0.1
+    else:
+        return 0.001
 
 # This funciton will trigger a selected algorithm and start sorting
 def sort():
     global data
     timeTick = set_speed()
+    # algo_list = ['Bubble Sort', 'Selection Sort', 'Insertion Sort', 'Quick Sort', 'Merge Sort']
     
     if algo_menu.get() == 'Bubble Sort':
         bubble_sort(data, drawData, timeTick)
+
+    elif algo_menu.get() == 'Selection Sort':
+        selection_sort(data, 0, len(data)-1, drawData, timeTick)
+
+    elif algo_menu.get() == 'Insertion Sort':
+        insertion_sort(data, 0, len(data)-1, drawData, timeTick)
+
+    elif algo_menu.get() == 'Quick Sort':
+        quick_sort(data, 0, len(data)-1, drawData, timeTick)
         
     elif algo_menu.get() == 'Merge Sort':
         merge_sort(data, 0, len(data)-1, drawData, timeTick)
